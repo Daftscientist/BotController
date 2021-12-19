@@ -3,3 +3,6 @@ class CommandAlreadyExists(Exception):
 
 class CommandNotFound(Exception):
     pass
+
+class RequiredArgument(Exception):
+    pass
