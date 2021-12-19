@@ -25,40 +25,38 @@ class App(object):
         return inner
     
     async def on_message(self, message: Message) -> None:
+        message_content = message.content
         for command in self.commands:
-            if self.case_sensitive == True:
-                if message.content.startswith(f"{self.prefix}{command}"):
-                    argsInCommand = len(inspect.getfullargspec(self.commands[command]['function']).args) - 1
-                    if argsInCommand >= 0:
-                        argsInUsersCommand = message.content.split(f"{self.prefix}{command} ")[1].split()
-                        TheMessage = message.content.split(f"{self.prefix}{command} ")[1].split()
-                        arguments = argsInCommand
-                        if len(TheMessage) >= arguments:
-                            allNeededArgs = inspect.getfullargspec(self.commands[command]['function']).args
-                            allNeededArgs.remove('message')
-                            dictOfArgs = {}
-                            for item in allNeededArgs:
-                                dictOfArgs[item] = TheMessage[allNeededArgs.index(item)]
-                            return await self.commands[command]['function'](message, **dictOfArgs)
+            functionArguments = inspect.getfullargspec(self.commands[command]['function']).args
+            if self.case_sensitive:
+                if message_content.startswith(self.prefix + command):
+                    if (len(functionArguments) -1) >= 0:
+                        arguments = message_content.split(self.prefix + command)[1]
+                        if len(arguments) >= len(functionArguments):
+                            dictionary_of_arguments = {}
+                            functionArguments.remove('message')
+                            for item in functionArguments:
+                                dictionary_of_arguments[item] = arguments.split()[functionArguments.index(item)]
+                            return await self.commands[command]['function'](message, **dictionary_of_arguments)
                         else:
                             raise exceptions.RequiredArgument(f"In command {command}, there was missing arguments.")
-                    else:
-                        return await self.commands[command]['function'](message)
                 else:
                     if message.content.startswith(self.prefix):
-                        yes = message.content.split()[0]
-                        yes = yes.split("!")[1]
-                        raise exceptions.CommandNotFound(f"The command {yes} can't be found.")
-                    else:
-                        return None
-            else:
-                if message.content.lower().startswith(f"{self.prefix.lower()}{command.lower()}"):
-                    return await self.commands[command]['function'](message)
-                else:
-                    if message.content.startswith(self.prefix):
-                        yes = message.content.split()[0]
-                        yes = yes.split("!")[1]
+                        command = message.content.split()[0].split("!")[1]
                         raise exceptions.CommandNotFound(f"The command {command} can't be found.")
-                    else:
-                        return None
-
+            else:
+                if message_content.startswith(self.prefix.lower() + command.lower()):
+                    if (len(functionArguments) -1) >= 0:
+                        arguments = message_content.split(self.prefix.lower() + command.lower())[1]
+                        if len(arguments) >= len(functionArguments):
+                            dictionary_of_arguments = {}
+                            functionArguments.remove('message')
+                            for item in functionArguments:
+                                dictionary_of_arguments[item.lower()] = arguments[functionArguments.index(item.lower())]
+                            return await self.commands[command]['function'](message, **dictionary_of_arguments)
+                        else:
+                            raise exceptions.RequiredArgument(f"In command {command}, there was missing arguments.")
+                else:
+                    if message.content.startswith(self.prefix):
+                        command = message.content.split()[0].split("!")[1]
+                        raise exceptions.CommandNotFound(f"The command {command} can't be found.")
