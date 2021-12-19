@@ -5,10 +5,7 @@ client = Client(intents=Intents.ALL)
 commands = handler.App(client, "!", case_sensitive=True)
 
 @commands.command(command_name="help")
-def help_command(message):  ## need to make messafe have value
-    print("gae")
+def help_command(message):
+    return message.channel.send(content="pong")
 
-
-
-
-help_command("uwu")
+client.run("OTE4NTg4NzE1Mjg1MjMzNjg0.YbJcaA.N0wp8VZwwXMoEpgOyEmHoxzHjtE")
