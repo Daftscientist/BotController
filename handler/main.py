@@ -28,7 +28,7 @@ class App(object):
         for command in self.commands():
             if self.case_sensitive == True:
                 if message.content.startswith() == f"{self.prefix}{command}":
-                    return await self.commands[command]['function']()
+                    return await self.commands[command]['function'](message)
                 else:
                     if message.content.startswith(self.prefix):
                         raise exceptions.CommandNotFound(f"The command {command} can't be found.")
@@ -36,7 +36,7 @@ class App(object):
                         return None
             else:
                 if message.content.lower().startswith() == f"{self.prefix.lower()}{command.lower()}":
-                    return await self.commands[command]['function']()
+                    return await self.commands[command]['function'](message)
                 else:
                     if message.content.startswith(self.prefix):
                         raise exceptions.CommandNotFound(f"The command {command} can't be found.")
