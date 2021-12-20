@@ -3,15 +3,21 @@ import inspect
 from handler import exceptions
 from acord import Message
 
-
 class App(object):
-    def __init__(self, acord_bot_instance, prefix: str, case_sensitive: bool) -> None:
-        self.bot_instance = acord_bot_instance
-        acord_bot_instance.on("message")(self.on_message)
+    def __init__(self, client, prefix: str, case_sensitive: bool) -> None:
+        self.bot_instance = client
+        client.on("message")(self.on_message)
         self.prefix = prefix
         self.commands = {}
         self.case_sensitive = case_sensitive
-    
+
+    async def CaseSensitive(self, string: str) -> str:
+        """ Turns the string lowercase if case sensitive is enabled. """
+        if self.case_sensitive:
+            return string
+        else:
+            return string.lower()
+
     def command(self, command_name):
         def inner(func):
             if self.case_sensitive:
@@ -20,43 +26,41 @@ class App(object):
             else:
                 if command_name.lower() in self.commands:
                     raise exceptions.CommandAlreadyExists(f"The command {command_name} already exists.")
-            self.commands[command_name] = {"function": func, "arguments": ()}
+            self.commands[command_name] = func
             return func
         return inner
     
+    async def checkIfOptionalArg(self, func, argument):
+        """ Checks if a param in a command is optional. """
+        for arg in str(inspect.signature(func)).split():
+            item = arg.replace(",", "").replace(")", "").replace("(", "")
+            newitem = item.split("=")[0]
+            if newitem == argument:
+                if "=" in item:
+                    return True
+                else:
+                    return False
+            else:
+                pass
+
     async def on_message(self, message: Message) -> None:
+        """ Checks the message content and if it matches a command, runs the command. """
         message_content = message.content
         for command in self.commands:
-            functionArguments = inspect.getfullargspec(self.commands[command]['function']).args
-            if self.case_sensitive:
-                if message_content.startswith(self.prefix + command):
-                    if (len(functionArguments) -1) >= 0:
-                        arguments = message_content.split(self.prefix + command)[1]
-                        if len(arguments) >= len(functionArguments):
-                            dictionary_of_arguments = {}
-                            functionArguments.remove('message')
-                            for item in functionArguments:
-                                dictionary_of_arguments[item] = arguments.split()[functionArguments.index(item)]
-                            return await self.commands[command]['function'](message, **dictionary_of_arguments)
-                        else:
-                            raise exceptions.RequiredArgument(f"In command {command}, there was missing arguments.")
-                else:
-                    if message.content.startswith(self.prefix):
-                        command = message.content.split()[0].split("!")[1]
-                        raise exceptions.CommandNotFound(f"The command {command} can't be found.")
+            functionArguments = inspect.getfullargspec(self.commands[command]).args
+            if message_content.startswith(await self.CaseSensitive(self.prefix) + await self.CaseSensitive(command)):
+                if (len(functionArguments) -1) >= 0:
+                    arguments = message_content.split(await self.CaseSensitive(self.prefix) + await self.CaseSensitive(command))[1]
+                    if len(arguments) >= (len(functionArguments) - 1):
+                        dictionary_of_arguments = {}
+                        functionArguments.remove('message')
+                        for item in functionArguments:
+                            dictionary_of_arguments[await self.CaseSensitive(item)] = await self.CaseSensitive(arguments.split()[functionArguments.index(item)])
+                        return await self.commands[command](message, **dictionary_of_arguments)
+                    else:
+                        raise exceptions.RequiredArgument(f"In command {command}, there was missing arguments.")
             else:
-                if message_content.startswith(self.prefix.lower() + command.lower()):
-                    if (len(functionArguments) -1) >= 0:
-                        arguments = message_content.split(self.prefix.lower() + command.lower())[1]
-                        if len(arguments) >= len(functionArguments):
-                            dictionary_of_arguments = {}
-                            functionArguments.remove('message')
-                            for item in functionArguments:
-                                dictionary_of_arguments[item.lower()] = arguments[functionArguments.index(item.lower())]
-                            return await self.commands[command]['function'](message, **dictionary_of_arguments)
-                        else:
-                            raise exceptions.RequiredArgument(f"In command {command}, there was missing arguments.")
-                else:
-                    if message.content.startswith(self.prefix):
-                        command = message.content.split()[0].split("!")[1]
-                        raise exceptions.CommandNotFound(f"The command {command} can't be found.")
+                pass
+        if message.content.startswith(self.prefix):
+            command = message.content.split()[0].split("!")[1]
+            raise exceptions.CommandNotFound(f"The command {command} can't be found.")
