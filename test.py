@@ -1,5 +1,5 @@
 import handler
-from acord import Client, Intents, Embed
+from acord import Client, Intents, Embed, Member, Message
 
 client = Client(intents=Intents.ALL)
 commands = handler.App(
@@ -9,12 +9,11 @@ commands = handler.App(
 )
 
 @commands.command(command_name="dm")
-async def dm_command(message, user, msgToDmTheUser):
-    return await message.channel.send(content=f"user: {user}\n the message to dm: {msgToDmTheUser}")
+async def dm_command(message, user: Member, msgToDmTheUser):
+    return await message.channel.send(content=f"user: {user.id}\n the message to dm: {msgToDmTheUser}")
 
 @commands.command("help")
-async def help(message):
-    embed = Embed(description="Sent using Daftscientist's command handler for acord.")
-    await message.channel.send(embed=embed)
+async def help(message: Message):
+    await message.channel.send(content=f"{message.author.system}")
 
 client.run("OTE4NTg4NzE1Mjg1MjMzNjg0.YbJcaA.pwc4un4eQ24uLlfgQOPSyBcxOSo")
