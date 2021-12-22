@@ -54,7 +54,14 @@ class App(object):
                     if len(arguments) >= (len(functionArguments) - 1):
                         dictionary_of_arguments = {}
                         functionArguments.remove('message')
+                        nonLastArguments = []
                         for item in functionArguments:
+                            if len(functionArguments) == (functionArguments.index(item) + 1):
+                                print(f"{item}, was the last argument in the func")
+                                for item in nonLastArguments:
+                                    print(item)
+                            else:
+                                nonLastArguments.append(item)
                             dictionary_of_arguments[await self.CaseSensitive(item)] = await self.CaseSensitive(arguments.split()[functionArguments.index(item)])
                         return await self.commands[command](message, **dictionary_of_arguments)
                     else:

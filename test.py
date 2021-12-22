@@ -10,7 +10,7 @@ commands = handler.App(
 
 @commands.command(command_name="dm")
 async def dm_command(message, user: Member, msgToDmTheUser):
-    return await message.channel.send(content=f"user: {user.id}\n the message to dm: {msgToDmTheUser}")
+    return await message.channel.send(content=f"user: {user}\n the message to dm: {msgToDmTheUser}")
 
 @commands.command("help")
 async def help(message: Message):
