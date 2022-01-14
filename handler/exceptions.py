@@ -4,5 +4,8 @@ class CommandAlreadyExists(Exception):
 class CommandNotFound(Exception):
     pass
 
-class RequiredArgument(Exception):
+class MissingRequiredArgument(Exception):
+    pass
+
+class MissingAllArguments(Exception):
     pass
