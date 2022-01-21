@@ -9,3 +9,6 @@ class MissingRequiredArgument(Exception):
 
 class MissingAllArguments(Exception):
     pass
+
+class SpaceInCommandName(Exception):
+    pass

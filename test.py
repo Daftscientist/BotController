@@ -10,7 +10,9 @@ commands = handler.App(
 )
 
 @commands.command()
-async def hdgyhbf(ctx, user, message, dm=False):
+async def test(ctx, user, message, dm=False):
+    if dm == False:
+        print("yes")
     await ctx.channel.send(content=f"{user}\n{message}\n{dm}")
 
 

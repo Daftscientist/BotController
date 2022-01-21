@@ -52,7 +52,10 @@ class App(object):
             if command_name == None:
                 commandName = func.__name__
             else:
-                commandName = command_name
+                if " " in command_name:
+                    raise exceptions.SpaceInCommandName("Commands can't have spaces in them.")
+                else:
+                    commandName = command_name
             if self.case_sensitive:
                 if commandName in self.commands:
                     raise exceptions.CommandAlreadyExists(f"The command {commandName} already exists.")
@@ -79,6 +82,9 @@ class App(object):
         arguments.pop(list(arguments.keys())[0])
         return arguments
 
+    async def getMember(self, memberStr) -> str:
+        ...
+
     async def on_message(self, message: Message) -> None:
         """ Checks the message content and if it matches a command, runs the command. """
         # <!---------------- Variables ------------------->
@@ -90,6 +96,7 @@ class App(object):
             if commandName in self.commands:
                 # <!---------------- Variables ------------------->
                 functionArgs = await self.getArguments(self.commands[commandName])
+                print(functionArgs)
                 rawVars = messageContent.replace(prefix, "", 1).replace(commandName, "", 1)
                 intOfCmdArgs = len(functionArgs) - 1
                 messageArguments = rawVars.split(maxsplit=intOfCmdArgs)
