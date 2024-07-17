@@ -1,15 +1,15 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import inspect
 from discord.client import Client
 from discord import Message
-from exceptions import CommandNotFound
+from typing import List, Callable, Any
 
 @dataclass
 class Command:
     name: str
     description: str
-    function: callable
-
+    function: Callable
+    param_types: List[Any] = field(default_factory=list)
 
 class Handler:
     def __init__(self, app: Client, prefix: str | list[str]):
@@ -23,11 +23,11 @@ class Handler:
 
         self.app = app
         self.prefix = prefix
-        self.commands: list[Command] = []
+        self.commands: List[Command] = []
 
         self.app.event(self.on_message)
 
-    def check_and_guess_param_types(self, func):
+    def check_and_guess_param_types(self, func: Callable) -> List[Any]:
         # Extract the parameters of the function, skipping the first one (context object)
         params = list(inspect.signature(func).parameters.values())[1:]
         
@@ -73,17 +73,19 @@ class Handler:
         # Check if the command is valid
         for cmd in self.commands:
             if cmd.name == command:
-                # Check and guess parameter types
-                param_types = self.check_and_guess_param_types(cmd.function)
-                # The first arg is always the ctx object
+                param_types = cmd.param_types
+                
+                # If the function specifies no arguments, ignore all passed arguments
+                if not param_types:
+                    await cmd.function(message)
+                    return
 
-                # Check if the number of args is correct
-                if len(param_types) > len(args):
-                    difference = len(param_types) - len(args)
-                    # Remove the last n types
-                    param_types = param_types[:-difference]
+                # Bundle extra arguments into the last specified argument
+                if len(args) > len(param_types):
+                    # Join extra arguments with spaces and assign to the last expected argument
+                    args = args[:len(param_types) - 1] + [" ".join(args[len(param_types) - 1:])]
 
-                # Cast each arg to the correct param type. use each same index
+                # Cast each arg to the correct param type
                 for i, arg in enumerate(args):
                     corresponding_type = param_types[i]
                     try:
@@ -97,6 +99,8 @@ class Handler:
     # Decorator func to add commands
     def command(self, name: str, description: str):
         def decorator(func):
-            self.commands.append(Command(name, description, func))
+            # Check and guess parameter types once at registration
+            param_types = self.check_and_guess_param_types(func)
+            self.commands.append(Command(name, description, func, param_types))
             return func
         return decorator
