@@ -17,7 +17,7 @@ async def handle_command_not_found(message: discord.Message):
     await message.channel.send("Command not found.")
 
 @myHandler.permission_restricted([DiscordPermissions.ADMINISTRATOR])
-@myHandler.command("hello", "Say hello to the bot")
+@myHandler.command("hello world", "Say hello to the bot")
 async def hello(ctx: discord.Message):
     await ctx.channel.send("Hello!")
 

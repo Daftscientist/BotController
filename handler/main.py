@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import inspect
 from discord.client import Client
-from discord import Message, Permissions, Role as discord_Role, flags
+from discord import Message, Permissions, Role as discord_Role
 from typing import List, Callable, Any, Union
 from .custom_exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError, InvalidPermissions
 from .enums import Event, DiscordPermissions
@@ -24,7 +24,7 @@ class Command:
     param_types: List[Any] = field(default_factory=list)
 
 class Handler:
-    def __init__(self, app: Client, prefix: str | list[str], case_insensitive: bool = False):
+    def __init__(self, app: Client, prefix: Union[str, List[str]], case_insensitive: bool = False):
         if not isinstance(app, Client):
             raise TypeError("app must be an instance of discord.Client")
         if not isinstance(prefix, (str, list)) or not all(isinstance(i, str) for i in prefix):
@@ -73,30 +73,35 @@ class Handler:
             return
 
         # Check if message starts with any prefix
-        if not message.content.startswith(tuple(self.prefix)):
+        if not any(message.content.startswith(prefix) for prefix in self.prefix):
             return
 
         # Remove the first instance of the prefix
         content = message.content
         for prefix in self.prefix:
             if content.startswith(prefix):
-                content = content[len(prefix):]
+                content = content[len(prefix):].strip()
                 break
-        
-        # We are now left with 'command arg1 arg2 arg3 ...'
-        # Split it into a list
-        command_arg = content.split(" ")
 
-        # Separate command from args
-        command = command_arg[0]
-        args = command_arg[1:]
-
-        if self.case_insensitive:
-            command = command.lower()
-
-        # Check if the command is valid
+        # Check if content starts with any command name or alias
+        command_name = None
         for cmd in self.commands:
-            if cmd.name == command or command in cmd.aliases:
+            command_start = next((alias for alias in [cmd.name] + cmd.aliases if content.startswith(alias)), None)
+            if command_start:
+                command_name = command_start
+                content = content[len(command_name):].strip()
+                break
+
+        if command_name is None:
+            await self.trigger_event('CommandNotFound', message)
+            return
+
+        # Split content into args
+        args = content.split(" ") if content else []
+
+        # Find the corresponding command
+        for cmd in self.commands:
+            if cmd.name == command_name or command_name in cmd.aliases:
                 param_types = cmd.param_types
                 
                 # If the function specifies no arguments, ignore all passed arguments
@@ -229,7 +234,6 @@ class Handler:
                 elif event_name == 'InvalidPermissions':
                     raise InvalidPermissions(f"User does not have required permissions")
 
-                
     def event(self, event_name: Union[str, Event]):
         def decorator(func):
             new_event_name = event_name
