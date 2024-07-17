@@ -1,8 +1,5 @@
 import enum
 
-import enum
-from discord import Permissions
-
 class DiscordPermissions(enum.Enum):
     CREATE_INSTANT_INVITE = 'create_instant_invite'
     KICK_MEMBERS = 'kick_members'
