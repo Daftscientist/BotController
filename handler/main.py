@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 import inspect
 from discord.client import Client
-from discord import Message
+from discord import Message, Role as discord_Role
 from typing import List, Callable, Any, Union
-from .custom_exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError
+from .custom_exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError, InvalidPermissions
 from .enums import Event
 
 @dataclass
@@ -38,7 +38,8 @@ class Handler:
             'CommandNotFound': [],
             'ExceptionDuringCommand': [],
             'ArgumentCastingError': [],
-            'CommandReceived': []
+            'CommandReceived': [],
+            'InvalidPermissions': []
         }
 
     def check_and_guess_param_types(self, func: Callable) -> List[Any]:
@@ -119,6 +120,18 @@ class Handler:
         # If no matching command found, trigger CommandNotFound event
         await self.trigger_event('CommandNotFound', message)
 
+    ## decorator func to be placed above the command decorator to check if user has a role
+    def role_required(self, role: discord_Role):
+        def decorator(func):
+            async def wrapper(message: Message, *args):
+                if role in message.author.roles:
+                    await func(message, *args)
+                else:
+                    await self.trigger_event('InvalidPermissions', message, role)
+                    return
+            return wrapper
+        return decorator
+
     # Decorator func to add commands
     def command(self, name: str, description: str, aliases: List[str] = []):
         def decorator(func):
@@ -141,6 +154,9 @@ class Handler:
                     raise ExceptionDuringCommand(f"Exception occurred during command execution")
                 elif event_name == 'ArgumentCastingError':
                     raise ArgumentCastingError(f"Error casting argument")
+                elif event_name == 'InvalidPermissions':
+                    raise InvalidPermissions(f"User does not have required permissions")
+
                 
     def event(self, event_name: Union[str, Event]):
         def decorator(func):

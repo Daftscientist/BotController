@@ -5,6 +5,7 @@ class Event(enum.Enum):
     ArgumentCastingError = "ArgumentCastingError"
     ExceptionDuringCommand = "ExceptionDuringCommand"
     CommandReceived = "CommandReceived"
+    InvalidPermissions = "InvalidPermissions"
 
     def __str__(self):
         return self.value

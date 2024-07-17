@@ -6,3 +6,6 @@ class ExceptionDuringCommand(Exception):
 
 class ArgumentCastingError(Exception):
     pass
+
+class InvalidPermissions(Exception):
+    pass

@@ -1,6 +1,8 @@
 import discord
 from handler import Handler, Event
 
+from discord import Role
+
 intents = discord.Intents.default()
 intents.message_content = True  # Enable message_content intent
 
