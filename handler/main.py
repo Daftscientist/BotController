@@ -8,6 +8,15 @@ from .enums import Event
 
 @dataclass
 class Command:
+    """
+    Represents a command that can be executed by the user.
+
+    Attributes:
+        name: The name of the command
+        description: A brief description of the command
+        aliases: A list of aliases for the command
+        function: The function to be executed when the command is called
+    """
     name: str
     description: str
     aliases: List[str] = field(default_factory=list)
@@ -128,6 +137,21 @@ class Handler:
                     await func(message, *args)
                 else:
                     await self.trigger_event('InvalidPermissions', message, role)
+                    return
+            return wrapper
+        return decorator
+    
+    ## decorator func to be placed above the command decorator to check if users id is in a list
+    def user_id_required(self, user_id: list[int]):
+        if not all(isinstance(i, int) for i in user_id):
+            raise TypeError("user_id must be a list of integers")
+
+        def decorator(func):
+            async def wrapper(message: Message, *args):
+                if message.author.id in user_id:
+                    await func(message, *args)
+                else:
+                    await self.trigger_event('InvalidPermissions', message, user_id)
                     return
             return wrapper
         return decorator
