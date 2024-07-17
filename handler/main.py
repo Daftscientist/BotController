@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import inspect
 from discord.client import Client
 from discord import Message
-from typing import List, Callable, Any
+from typing import List, Callable, Any, Union
 from .custom_exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError
 from .enums import Event
 
@@ -135,12 +135,13 @@ class Handler:
                 elif event_name == 'ArgumentCastingError':
                     raise ArgumentCastingError(f"Error casting argument")
                 
-    def event(self, event_name: str | Event):
-        if isinstance(event_name, str):
-            event_name = Event.get_event(event_name)
+    def event(self, event_name: Union[str, Event]):
         def decorator(func):
-            if event_name in self.events:
-                self.events[event_name].append(func)
+            new_event_name = event_name
+            if isinstance(event_name, Event):
+                new_event_name = event_name.value
+            if new_event_name in self.events:
+                self.events[new_event_name].append(func)
             else:
                 raise ValueError(f"Unknown event name '{event_name}'")
             return func
