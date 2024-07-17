@@ -1,5 +1,5 @@
 import discord
-from handler import Handler, Event
+from handler import Handler, Event, DiscordPermissions
 
 from discord import Role
 
@@ -16,6 +16,7 @@ myHandler = Handler(client, "!")
 async def handle_command_not_found(message: discord.Message):
     await message.channel.send("Command not found.")
 
+@myHandler.permission_restricted([DiscordPermissions.ADMINISTRATOR])
 @myHandler.command("hello", "Say hello to the bot")
 async def hello(ctx: discord.Message):
     await ctx.channel.send("Hello!")

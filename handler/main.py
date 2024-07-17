@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 import inspect
 from discord.client import Client
-from discord import Message, Role as discord_Role
+from discord import Message, Permissions, Role as discord_Role, flags
 from typing import List, Callable, Any, Union
 from .custom_exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError, InvalidPermissions
-from .enums import Event
+from .enums import Event, DiscordPermissions
 
 @dataclass
 class Command:
@@ -19,8 +19,8 @@ class Command:
     """
     name: str
     description: str
-    aliases: List[str] = field(default_factory=list)
     function: Callable
+    aliases: List[str] = field(default_factory=list)
     param_types: List[Any] = field(default_factory=list)
 
 class Handler:
@@ -130,19 +130,19 @@ class Handler:
         await self.trigger_event('CommandNotFound', message)
 
     ## decorator func to be placed above the command decorator to check if user has a role
-    def role_required(self, role: discord_Role):
+    def role_restricted(self, role: discord_Role):
         def decorator(func):
             async def wrapper(message: Message, *args):
                 if role in message.author.roles:
                     await func(message, *args)
                 else:
-                    await self.trigger_event('InvalidPermissions', message, role)
+                    await self.trigger_event('InvalidPermissions', 'ROLE', message, role)
                     return
             return wrapper
         return decorator
     
     ## decorator func to be placed above the command decorator to check if users id is in a list
-    def user_id_required(self, user_id: list[int]):
+    def user_restricted(self, user_id: list[int]):
         if not all(isinstance(i, int) for i in user_id):
             raise TypeError("user_id must be a list of integers")
 
@@ -151,8 +151,56 @@ class Handler:
                 if message.author.id in user_id:
                     await func(message, *args)
                 else:
-                    await self.trigger_event('InvalidPermissions', message, user_id)
+                    await self.trigger_event('InvalidPermissions', 'USER', message, user_id)
                     return
+            return wrapper
+        return decorator
+
+    ## channel restricted decorator
+    def channel_restricted(self, channel_id: list[int]):
+        if not all(isinstance(i, int) for i in channel_id):
+            raise TypeError("channel_id must be a list of integers")
+
+        def decorator(func):
+            async def wrapper(message: Message, *args):
+                if message.channel.id in channel_id:
+                    await func(message, *args)
+                else:
+                    await self.trigger_event('InvalidPermissions', 'CHANNEL', message, channel_id)
+                    return
+            return wrapper
+        return decorator
+
+    ## server restricted decorator
+    def server_restricted(self, server_id: list[int]):
+        if not all(isinstance(i, int) for i in server_id):
+            raise TypeError("server_id must be a list of integers")
+
+        def decorator(func):
+            async def wrapper(message: Message, *args):
+                if message.guild.id in server_id:
+                    await func(message, *args)
+                else:
+                    await self.trigger_event('InvalidPermissions', 'SERVER', message, server_id)
+                    return
+            return wrapper
+        return decorator
+
+    def permission_restricted(self, permissions: list[DiscordPermissions]):
+        if not all(isinstance(i, DiscordPermissions) for i in permissions):
+            raise TypeError("permissions must be a list of DiscordPermissions")
+
+        def decorator(func):
+            async def wrapper(message: Message, *args):
+                # Check if the author has the specified permissions
+                author_permissions = message.author.guild_permissions
+                for permission in permissions:
+                    if not getattr(author_permissions, permission.value):
+                        await self.trigger_event('InvalidPermissions', 'PERMISSION', message, permission)
+                        return
+
+                await func(message, *args)
+
             return wrapper
         return decorator
 
@@ -161,7 +209,7 @@ class Handler:
         def decorator(func):
             # Check and guess parameter types once at registration
             param_types = self.check_and_guess_param_types(func)
-            self.commands.append(Command(name, description, aliases, func, param_types))
+            self.commands.append(Command(name, description, func, aliases, param_types))
             return func
         return decorator
 

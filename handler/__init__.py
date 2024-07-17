@@ -1,2 +1,2 @@
 from .main import Handler, Command
-from .enums import Event
+from .enums import Event, DiscordPermissions
