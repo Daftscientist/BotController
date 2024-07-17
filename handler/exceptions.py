@@ -1,14 +1,8 @@
-class CommandAlreadyExists(Exception):
-    pass
-
 class CommandNotFound(Exception):
     pass
 
-class MissingRequiredArgument(Exception):
+class ExceptionDuringCommand(Exception):
     pass
 
-class MissingAllArguments(Exception):
-    pass
-
-class SpaceInCommandName(Exception):
+class ArgumentCastingError(Exception):
     pass

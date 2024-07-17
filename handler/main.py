@@ -3,6 +3,7 @@ import inspect
 from discord.client import Client
 from discord import Message
 from typing import List, Callable, Any
+from exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError
 
 @dataclass
 class Command:
@@ -126,7 +127,13 @@ class Handler:
                 for event_handler in self.events[event_name]:
                     await event_handler(*args, **kwargs)
             else:
-                raise Exception(f"No handler registered for event '{event_name}'")
+                if event_name == 'CommandNotFound':
+                    raise CommandNotFound(f"Command not found")
+                elif event_name == 'ExceptionDuringCommand':
+                    raise ExceptionDuringCommand(f"Exception occurred during command execution")
+                elif event_name == 'ArgumentCastingError':
+                    raise ArgumentCastingError(f"Error casting argument")
+                
 
     def event(self, event_name: str):
         def decorator(func):
