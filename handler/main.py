@@ -27,6 +27,14 @@ class Handler:
 
         self.app.event(self.on_message)
 
+        # Custom events
+        self.events = {
+            'CommandNotFound': [],
+            'ExceptionDuringCommand': [],
+            'ArgumentCastingError': [],
+            'CommandReceived': []
+        }
+
     def check_and_guess_param_types(self, func: Callable) -> List[Any]:
         # Extract the parameters of the function, skipping the first one (context object)
         params = list(inspect.signature(func).parameters.values())[1:]
@@ -47,6 +55,9 @@ class Handler:
         # Ensure we are not processing messages from the bot itself
         if message.author == self.app.user:
             return
+
+        # Print message content for debugging
+        print(f"Received message: {message.content}")
 
         # Check if message starts with any prefix
         if not message.content.startswith(tuple(self.prefix)):
@@ -75,6 +86,7 @@ class Handler:
                 # If the function specifies no arguments, ignore all passed arguments
                 if not param_types:
                     await cmd.function(message)
+                    await self.trigger_event('CommandReceived', message, cmd)
                     return
 
                 # Bundle extra arguments into the last specified argument
@@ -88,27 +100,42 @@ class Handler:
                     try:
                         args[i] = corresponding_type(arg)
                     except ValueError:
-                        raise ValueError(f"Could not cast {arg} to {corresponding_type}")
+                        await self.trigger_event('ArgumentCastingError', message, cmd, arg)
+                        return
 
-                await cmd.function(message, *args)
+                try:
+                    await cmd.function(message, *args)
+                    await self.trigger_event('CommandReceived', message, cmd)
+                except Exception as e:
+                    await self.trigger_event('ExceptionDuringCommand', message, cmd, e)
                 return
+        
+        # If no matching command found, trigger CommandNotFound event
+        await self.trigger_event('CommandNotFound', message)
 
     # Decorator func to add commands
     def command(self, name: str, description: str):
         def decorator(func):
-            # Ensure the function is async
-            if not inspect.iscoroutinefunction(func):
-                raise TypeError("Command function must be a coroutine")
             # Check and guess parameter types once at registration
             param_types = self.check_and_guess_param_types(func)
             self.commands.append(Command(name, description, func, param_types))
             return func
         return decorator
 
-    def register_command(self, name: str, description: str, func: Callable):
-        ## make sure the function is async
-        if not inspect.iscoroutinefunction(func):
-            raise TypeError("Command function must be a coroutine")
+    # Custom event handling methods
+    async def trigger_event(self, event_name: str, *args, **kwargs):
+        if event_name in self.events:
+            if self.events[event_name]:
+                for event_handler in self.events[event_name]:
+                    await event_handler(*args, **kwargs)
+            else:
+                raise Exception(f"No handler registered for event '{event_name}'")
 
-        param_types = self.check_and_guess_param_types(func)
-        self.commands.append(Command(name, description, func, param_types))
+    def event(self, event_name: str):
+        def decorator(func):
+            if event_name in self.events:
+                self.events[event_name].append(func)
+            else:
+                raise ValueError(f"Unknown event name '{event_name}'")
+            return func
+        return decorator
