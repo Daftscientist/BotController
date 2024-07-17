@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        h1, h2, h3, h4 {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 0.3em;
+        }
+        .method {
+            margin-left: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API Reference</h1>
+
+        <h2>Enums</h2>
+
+        <h3>DiscordPermissions</h3>
+        <p>Enum representing various Discord permissions.</p>
+        <ul>
+            <li><code>CREATE_INSTANT_INVITE</code>: Permission to create instant invites.</li>
+            <li><code>KICK_MEMBERS</code>: Permission to kick members.</li>
+            <li><code>BAN_MEMBERS</code>: Permission to ban members.</li>
+            <li><code>ADMINISTRATOR</code>: Permission to be an administrator.</li>
+            <li><code>MANAGE_CHANNELS</code>: Permission to manage channels.</li>
+            <li><code>MANAGE_GUILD</code>: Permission to manage the guild.</li>
+            <li><code>ADD_REACTIONS</code>: Permission to add reactions.</li>
+            <li><code>VIEW_AUDIT_LOG</code>: Permission to view the audit log.</li>
+            <li><code>PRIORITY_SPEAKER</code>: Permission to be a priority speaker.</li>
+            <li><code>STREAM</code>: Permission to stream.</li>
+            <li><code>VIEW_CHANNEL</code>: Permission to view channels.</li>
+            <li><code>SEND_MESSAGES</code>: Permission to send messages.</li>
+            <li><code>SEND_TTS_MESSAGES</code>: Permission to send TTS messages.</li>
+            <li><code>MANAGE_MESSAGES</code>: Permission to manage messages.</li>
+            <li><code>EMBED_LINKS</code>: Permission to embed links.</li>
+            <li><code>ATTACH_FILES</code>: Permission to attach files.</li>
+            <li><code>READ_MESSAGE_HISTORY</code>: Permission to read message history.</li>
+            <li><code>MENTION_EVERYONE</code>: Permission to mention everyone.</li>
+            <li><code>USE_EXTERNAL_EMOJIS</code>: Permission to use external emojis.</li>
+            <li><code>VIEW_GUILD_INSIGHTS</code>: Permission to view guild insights.</li>
+            <li><code>CONNECT</code>: Permission to connect.</li>
+            <li><code>SPEAK</code>: Permission to speak.</li>
+            <li><code>MUTE_MEMBERS</code>: Permission to mute members.</li>
+            <li><code>DEAFEN_MEMBERS</code>: Permission to deafen members.</li>
+            <li><code>MOVE_MEMBERS</code>: Permission to move members.</li>
+            <li><code>USE_VAD</code>: Permission to use voice activity detection.</li>
+            <li><code>CHANGE_NICKNAME</code>: Permission to change nickname.</li>
+            <li><code>MANAGE_NICKNAMES</code>: Permission to manage nicknames.</li>
+            <li><code>MANAGE_ROLES</code>: Permission to manage roles.</li>
+            <li><code>MANAGE_WEBHOOKS</code>: Permission to manage webhooks.</li>
+            <li><code>MANAGE_EMOJIS_AND_STICKERS</code>: Permission to manage emojis and stickers.</li>
+            <li><code>USE_APPLICATION_COMMANDS</code>: Permission to use application commands.</li>
+            <li><code>REQUEST_TO_SPEAK</code>: Permission to request to speak.</li>
+            <li><code>MANAGE_THREADS</code>: Permission to manage threads.</li>
+            <li><code>USE_PUBLIC_THREADS</code>: Permission to use public threads.</li>
+            <li><code>USE_PRIVATE_THREADS</code>: Permission to use private threads.</li>
+            <li><code>USE_EXTERNAL_STICKERS</code>: Permission to use external stickers.</li>
+            <li><code>SEND_MESSAGES_IN_THREADS</code>: Permission to send messages in threads.</li>
+            <li><code>START_EMBEDDED_ACTIVITIES</code>: Permission to start embedded activities.</li>
+        </ul>
+
+        <h3>Event</h3>
+        <p>Enum representing various events in the application.</p>
+        <ul>
+            <li><code>CommandNotFound</code>: Event triggered when a command is not found.</li>
+            <li><code>ArgumentCastingError</code>: Event triggered when there is an error casting an argument.</li>
+            <li><code>ExceptionDuringCommand</code>: Event triggered when there is an exception during command execution.</li>
+            <li><code>CommandReceived</code>: Event triggered when a command is received.</li>
+            <li><code>InvalidPermissions</code>: Event triggered when a user has invalid permissions.</li>
+        </ul>
+
+        <h2>Exceptions</h2>
+
+        <h3>CommandNotFound</h3>
+        <p>Exception raised when a command is not found.</p>
+
+        <h3>ExceptionDuringCommand</h3>
+        <p>Exception raised when there is an exception during command execution.</p>
+
+        <h3>ArgumentCastingError</h3>
+        <p>Exception raised when there is an error casting an argument.</p>
+
+        <h3>InvalidPermissions</h3>
+        <p>Exception raised when a user has invalid permissions.</p>
+
+        <h2>Handler Class</h2>
+        <p>The <code>Handler</code> class processes commands and events in a Discord bot.</p>
+
+        <h3>__init__(self, app: Client, prefix: Union[str, List[str]], case_insensitive: bool = False)</h3>
+        <p>Initialize the Handler.</p>
+        <ul>
+            <li><strong>app</strong> (Client): The Discord client instance.</li>
+            <li><strong>prefix</strong> (Union[str, List[str]]): The prefix or list of prefixes for commands.</li>
+            <li><strong>case_insensitive</strong> (bool): Whether command matching is case insensitive.</li>
+        </ul>
+
+        <h3>resolve_ping_to_role(self, guild: Guild, role_id_or_ping: Union[int, str])</h3>
+        <p>Resolve a role mention or ID to a role ID.</p>
+        <ul>
+            <li><strong>guild</strong> (Guild): The guild in which to resolve the role.</li>
+            <li><strong>role_id_or_ping</strong> (Union[int, str]): The role ID or mention.</li>
+        </ul>
+
+        <h3>resolve_ping_to_user(self, guild: Guild, user_id_or_ping: Union[int, str])</h3>
+        <p>Resolve a user mention or ID to a user ID.</p>
+        <ul>
+            <li><strong>guild</strong> (Guild): The guild in which to resolve the user.</li>
+            <li><strong>user_id_or_ping</strong> (Union[int, str]): The user ID or mention.</li>
+        </ul>
+
+        <h3>check_and_guess_param_types(self, func: Callable)</h3>
+        <p>Check and guess parameter types for a command function.</p>
+        <ul>
+            <li><strong>func</strong> (Callable): The command function.</li>
+        </ul>
+
+        <h3>on_message(self, message: Message)</h3>
+        <p>Handle an incoming message.</p>
+        <ul>
+            <li><strong>message</strong> (Message): The incoming message.</li>
+        </ul>
+
+        <h3>role_restricted(self, role: discord_Role)</h3>
+        <p>Decorator to restrict a command to users with a specific role.</p>
+        <ul>
+            <li><strong>role</strong> (discord_Role): The required role.</li>
+        </ul>
+
+        <h3>user_restricted(self, user_id: list[int])</h3>
+        <p>Decorator to restrict a command to specific users.</p>
+        <ul>
+            <li><strong>user_id</strong> (list[int]): List of allowed user IDs.</li>
+        </ul>
+
+        <h3>channel_restricted(self, channel_id: list[int])</h3>
+        <p>Decorator to restrict a command to specific channels.</p>
+        <ul>
+            <li><strong>channel_id</strong> (list[int]): List of allowed channel IDs.</li>
+        </ul>
+
+        <h3>server_restricted(self, server_id: list[int])</h3>
+        <p>Decorator to restrict a command to specific servers.</p>
+        <ul>
+            <li><strong>server_id</strong> (list[int]): List of allowed server IDs.</li>
+        </ul>
+
+        <h3>role_banned(self, role: discord_Role)</h3>
+        <p>Decorator to ban a command from users with a specific role.</p>
+        <ul>
+            <li><strong>role</strong> (discord_Role): The banned role.</li>
+        </ul>
+
+        <h3>user_banned(self, user_id: list[int])</h3>
+        <p>Decorator to ban a command from specific users.</p>
+        <ul>
+            <li><strong>user_id</strong> (list[int]): List of banned user IDs.</li>
+        </ul>
+
+        <h3>channel_banned(self, channel_id: list[int])</h3>
+        <p>Decorator to ban a command from specific channels.</p>
+        <ul>
+            <li><strong>channel_id</strong> (list[int]): List of banned channel IDs.</li>
+        </ul>
+
+        <h3>server_banned(self, server_id: list[int])</h3>
+        <p>Decorator to ban a command from specific servers.</p>
+        <ul>
+            <li><strong>server_id</strong> (list[int]): List of banned server IDs.</li>
+        </ul>
+
+    </div>
+</body>
+</html>
