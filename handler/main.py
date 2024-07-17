@@ -3,7 +3,8 @@ import inspect
 from discord.client import Client
 from discord import Message
 from typing import List, Callable, Any
-from exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError
+from .custom_exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError
+from .enums import Event
 
 @dataclass
 class Command:
@@ -134,8 +135,9 @@ class Handler:
                 elif event_name == 'ArgumentCastingError':
                     raise ArgumentCastingError(f"Error casting argument")
                 
-
-    def event(self, event_name: str):
+    def event(self, event_name: str | Event):
+        if isinstance(event_name, str):
+            event_name = Event.get_event(event_name)
         def decorator(func):
             if event_name in self.events:
                 self.events[event_name].append(func)
