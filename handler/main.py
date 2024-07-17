@@ -99,8 +99,19 @@ class Handler:
     # Decorator func to add commands
     def command(self, name: str, description: str):
         def decorator(func):
+            # Ensure the function is async
+            if not inspect.iscoroutinefunction(func):
+                raise TypeError("Command function must be a coroutine")
             # Check and guess parameter types once at registration
             param_types = self.check_and_guess_param_types(func)
             self.commands.append(Command(name, description, func, param_types))
             return func
         return decorator
+
+    def register_command(self, name: str, description: str, func: Callable):
+        ## make sure the function is async
+        if not inspect.iscoroutinefunction(func):
+            raise TypeError("Command function must be a coroutine")
+
+        param_types = self.check_and_guess_param_types(func)
+        self.commands.append(Command(name, description, func, param_types))
