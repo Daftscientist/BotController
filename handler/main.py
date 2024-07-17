@@ -1,37 +1,102 @@
-""" Hi """
-
-import re
-import asyncio
+from dataclasses import dataclass
 import inspect
-from handler import exceptions
-from acord import Message
+from discord.client import Client
+from discord import Message
+from exceptions import CommandNotFound
 
-class App(object):
-    def __init__(self, client, prefix: str, case_sensitive: bool) -> None:
-        self.bot_instance = client
+@dataclass
+class Command:
+    name: str
+    description: str
+    function: callable
+
+
+class Handler:
+    def __init__(self, app: Client, prefix: str | list[str]):
+        if not isinstance(app, Client):
+            raise TypeError("app must be an instance of discord.Client")
+        if not isinstance(prefix, (str, list)) or not all(isinstance(i, str) for i in prefix):
+            raise TypeError("prefix must be a string or a list of strings")
+        
+        if isinstance(prefix, str):
+            prefix = [prefix]
+
+        self.app = app
         self.prefix = prefix
-        self.commands = {}
-        self.case_sensitive = case_sensitive
-        client.on("message_create")(self.on_message_create)
+        self.commands: list[Command] = []
 
-    def command(self, command_name=None):
-        def inner(func):
-            
-            return func
-        return inner
-    
-    async def getArguments(self, func) -> dict:
-        """ Gets the arguments from a live function and returns if they are optional or not. """
-        arguments = {}
-        rawFuncArguments = str(inspect.signature(func)).split()
-        for arg in rawFuncArguments:
-            arg = arg.replace(",", "").replace(")", "").replace("(", "")
-            argName = arg.split("=", 1)[0]
-            if len(arg.split("=", 1)) == 2:
-                argDefault = arg.split("=", 1)[1]
-                arguments[argName] = [False, argDefault]
+        self.app.event(self.on_message)
+
+    def check_and_guess_param_types(self, func):
+        # Extract the parameters of the function, skipping the first one (context object)
+        params = list(inspect.signature(func).parameters.values())[1:]
+        
+        param_types = []
+        for param in params:
+            # Check if the parameter has a type hint
+            if param.annotation is not inspect.Parameter.empty:
+                param_types.append(param.annotation)
             else:
-                arguments[argName] = [True]
-        arguments.pop(list(arguments.keys())[0])
-        return arguments
+                # If no type hint, guess the type (implement your own guessing logic here)
+                # For now, default to str
+                param_types.append(str)
+        
+        return param_types
 
+    async def on_message(self, message: Message):
+        # Ensure we are not processing messages from the bot itself
+        if message.author == self.app.user:
+            return
+
+        # Print message content for debugging
+        print(f"Received message: {message.content}")
+
+        # Check if message starts with any prefix
+        if not message.content.startswith(tuple(self.prefix)):
+            return
+
+        # Remove the first instance of the prefix
+        content = message.content
+        for prefix in self.prefix:
+            if content.startswith(prefix):
+                content = content[len(prefix):]
+                break
+        
+        # We are now left with 'command arg1 arg2 arg3 ...'
+        # Split it into a list
+        command_arg = content.split(" ")
+
+        # Separate command from args
+        command = command_arg[0]
+        args = command_arg[1:]
+
+        # Check if the command is valid
+        for cmd in self.commands:
+            if cmd.name == command:
+                # Check and guess parameter types
+                param_types = self.check_and_guess_param_types(cmd.function)
+                # The first arg is always the ctx object
+
+                # Check if the number of args is correct
+                if len(param_types) > len(args):
+                    difference = len(param_types) - len(args)
+                    # Remove the last n types
+                    param_types = param_types[:-difference]
+
+                # Cast each arg to the correct param type. use each same index
+                for i, arg in enumerate(args):
+                    corresponding_type = param_types[i]
+                    try:
+                        args[i] = corresponding_type(arg)
+                    except ValueError:
+                        raise ValueError(f"Could not cast {arg} to {corresponding_type}")
+
+                await cmd.function(message, *args)
+                return
+
+    # Decorator func to add commands
+    def command(self, name: str, description: str):
+        def decorator(func):
+            self.commands.append(Command(name, description, func))
+            return func
+        return decorator

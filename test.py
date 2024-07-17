@@ -1,19 +1,23 @@
-import handler
-import acord
-from acord import Client, Intents
+import discord
+from handler import Handler
 
-client = Client(intents=Intents.ALL)
-commands = handler.App(
-    client=client,
-    prefix="!", 
-    case_sensitive=True
-)
+intents = discord.Intents.default()
+intents.message_content = True  # Enable message_content intent
 
-@commands.command()
-async def test(ctx, user, message, dm=False):
-    if dm == False:
-        print("yes")
-    await ctx.channel.send(content=f"{user}\n{message}\n{dm}")
+client = discord.Client(intents=intents)
 
+myHandler = Handler(client, "!")
 
-client.run("OTE4NTg4NzE1Mjg1MjMzNjg0.YbJcaA.pwc4un4eQ24uLlfgQOPSyBcxOSo")
+@myHandler.command("hello", "Say hello to the bot")
+async def hello(ctx: discord.Message):
+    await ctx.channel.send("Hello!")
+
+@myHandler.command("add", "Add two numbers")
+async def add(ctx: discord.Message, a: int, b: int):
+    await ctx.channel.send(f"{a} + {b} = {a + b}")
+
+@client.event
+async def on_ready():
+    print(f'We have logged in as {client.user}')
+
+client.run("NzcxMzMxODE3OTYwNjM2NDI2.GOOeF0.q4kV5DNWcCLvaoaWgbNeqASB-2aClMv0_IJWAc")
