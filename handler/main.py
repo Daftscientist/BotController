@@ -56,9 +56,6 @@ class Handler:
         if message.author == self.app.user:
             return
 
-        # Print message content for debugging
-        print(f"Received message: {message.content}")
-
         # Check if message starts with any prefix
         if not message.content.startswith(tuple(self.prefix)):
             return
