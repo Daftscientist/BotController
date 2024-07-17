@@ -10,21 +10,25 @@ from .enums import Event
 class Command:
     name: str
     description: str
+    aliases: List[str] = field(default_factory=list)
     function: Callable
     param_types: List[Any] = field(default_factory=list)
 
 class Handler:
-    def __init__(self, app: Client, prefix: str | list[str]):
+    def __init__(self, app: Client, prefix: str | list[str], case_insensitive: bool = False):
         if not isinstance(app, Client):
             raise TypeError("app must be an instance of discord.Client")
         if not isinstance(prefix, (str, list)) or not all(isinstance(i, str) for i in prefix):
             raise TypeError("prefix must be a string or a list of strings")
-        
+        if not isinstance(case_insensitive, bool):
+            raise TypeError("case_insensitive must be a boolean")
+
         if isinstance(prefix, str):
             prefix = [prefix]
 
         self.app = app
         self.prefix = prefix
+        self.case_insensitive = case_insensitive
         self.commands: List[Command] = []
 
         self.app.event(self.on_message)
@@ -77,9 +81,12 @@ class Handler:
         command = command_arg[0]
         args = command_arg[1:]
 
+        if self.case_insensitive:
+            command = command.lower()
+
         # Check if the command is valid
         for cmd in self.commands:
-            if cmd.name == command:
+            if cmd.name == command or command in cmd.aliases:
                 param_types = cmd.param_types
                 
                 # If the function specifies no arguments, ignore all passed arguments
@@ -113,11 +120,11 @@ class Handler:
         await self.trigger_event('CommandNotFound', message)
 
     # Decorator func to add commands
-    def command(self, name: str, description: str):
+    def command(self, name: str, description: str, aliases: List[str] = []):
         def decorator(func):
             # Check and guess parameter types once at registration
             param_types = self.check_and_guess_param_types(func)
-            self.commands.append(Command(name, description, func, param_types))
+            self.commands.append(Command(name, description, aliases, func, param_types))
             return func
         return decorator
 
