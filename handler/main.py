@@ -60,7 +60,7 @@ class Handler:
         try:
             await execute_command(self.commands, self.EventManager, message, command_name, args)
         except Exception as e:
-            await self.EventManager.trigger_event('ExceptionDuringCommand', message, command_name, e)
+            await self.EventManager.trigger_event('ExceptionDuringCommand', message, self.commands[command_name], e)
 
     def command(self, name: str, description: str, aliases: List[str] = []):
         """

@@ -36,6 +36,17 @@ class InvalidPermissions(Exception):
     Attributes:
         message: The message object.
         permission_type: The type of permission (USER, CHANNEL, PERMISSION, or SERVER).
-        id: The ID of the user, channel
+        command: The command object.
+    """
+    pass
+
+class CommandOnCooldown(Exception):
+    """
+    Exception raised when a command is on cooldown.
+
+    Attributes:
+        message: The message object.
+        command: The command object.
+        cooldown: The cooldown object.
     """
     pass
