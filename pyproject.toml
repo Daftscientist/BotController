@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "botcontroller"
 version = "0.1.0"
-description = ""
-authors = ["Leo Johnston <67394753+Daftscientist@users.noreply.github.com>"]
+description = "BotController is a versatile command and event handling framework for Discord bots built on-top-of Discord.py."
+authors = ["Leo Johnston contact@leojohnston.tech"]
 readme = "README.md"
 packages = [{include = "discord"}]
 
