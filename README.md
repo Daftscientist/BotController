@@ -18,8 +18,7 @@ This project is a custom command handler for Discord bots, designed as a drop-in
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/yourusername/custom-discord-command-handler.git
-    cd custom-discord-command-handler
+    pip install botcontroller
     ```
 
 2. **Install the required dependencies:**
