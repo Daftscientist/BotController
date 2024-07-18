@@ -34,7 +34,7 @@ class EventManager:
             self.events[new_event_name].append(function)
         else:
             raise ValueError(f"Unknown event name '{new_event_name}'")
-    
+
     async def trigger_event(self, event_name: str, *args, **kwargs):
         """
         Trigger an event.
