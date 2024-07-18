@@ -1,4 +1,6 @@
 from typing import Callable
+
+from .custom_exceptions import CommandNotFound, ExceptionDuringCommand, ArgumentCastingError, InvalidPermissions
 from .enums import Event
 
 class EventManager:
@@ -42,12 +44,25 @@ class EventManager:
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
         """
+        print("hey" + event_name)
         new_event_name = event_name.value if isinstance(event_name, Event) else event_name
         if new_event_name in self.events:
+            print("hey")
+            print(self.events)
             for function in self.events[new_event_name]:
                 await function(*args, **kwargs)
         else:
-            raise ValueError(f"Unknown event name '{new_event_name}'")
+            print("nahh")
+            if event_name == 'CommandNotFound':
+                raise CommandNotFound(f"Command not found")
+            elif event_name == 'ExceptionDuringCommand':
+                raise ExceptionDuringCommand(f"Exception occurred during command execution")
+            elif event_name == 'ArgumentCastingError':
+                raise ArgumentCastingError(f"Error casting argument")
+            elif event_name == 'InvalidPermissions':
+                raise InvalidPermissions(f"Invalid permissions")
+            else:
+                raise ValueError(f"Unknown event name '{new_event_name}'")
     
     async def remove_event(self, event_name: str, function: Callable):
         """
