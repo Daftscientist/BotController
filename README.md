@@ -87,7 +87,7 @@ When a message starting with the specified prefix is detected, the handler will 
 
 ## Example
 
-Here is a more detailed example:
+Here is a more detailed example (view more examples in [the folder](/examples/)):
 
 ```python
 import discord
