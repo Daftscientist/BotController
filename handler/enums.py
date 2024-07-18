@@ -1,6 +1,10 @@
 import enum
 
 class DiscordPermissions(enum.Enum):
+    """
+    Enum class representing Discord permissions.
+    """
+
     CREATE_INSTANT_INVITE = 'create_instant_invite'
     KICK_MEMBERS = 'kick_members'
     BAN_MEMBERS = 'ban_members'
@@ -42,6 +46,9 @@ class DiscordPermissions(enum.Enum):
     START_EMBEDDED_ACTIVITIES = 'start_embedded_activities'
 
 class Event(enum.Enum):
+    """
+    Enum class representing events.
+    """
     CommandNotFound = "CommandNotFound"
     ArgumentCastingError = "ArgumentCastingError"
     ExceptionDuringCommand = "ExceptionDuringCommand"
@@ -56,10 +63,22 @@ class Event(enum.Enum):
 
     @classmethod
     def has_value(cls, value):
+        """
+        Check if the enum class has a value.
+
+        Args:
+            value: The value to check.
+        """
         return any(value == item.value for item in cls)
 
     @classmethod
     def get_event(cls, value):
+        """
+        Get an event by its value.
+
+        Args:
+            value: The value of the event.
+        """
         for item in cls:
             if item.value == value:
                 return item

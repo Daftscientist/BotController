@@ -16,7 +16,7 @@ myHandler = Handler(client, "!")
 async def handle_command_not_found(message: discord.Message):
     await message.channel.send("Command not found.")
 
-@myHandler.permission_restricted([DiscordPermissions.ADMINISTRATOR])
+@myHandler.Restricted.permission([DiscordPermissions.ADMINISTRATOR])
 @myHandler.command("hello world", "Say hello to the bot")
 async def hello(ctx: discord.Message):
     await ctx.channel.send("Hello!")
@@ -31,7 +31,7 @@ async def echo(ctx: discord.Message, message: str):
 async def add(ctx: discord.Message, a: int, b: int):
     await ctx.channel.send(f"{a} + {b} = {a + b}")
 
-@myHandler.permission_restricted([DiscordPermissions.ADMINISTRATOR])
+@myHandler.Restricted.permission([DiscordPermissions.ADMINISTRATOR])
 @myHandler.command("role", "Add a role to a user")
 async def role(ctx: discord.Message, role_id: discord.Role, user_id: discord.User):
     try:

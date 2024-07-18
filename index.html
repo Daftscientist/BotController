@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Reference</title>
+    <!-- External CSS for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,167 +23,227 @@
         .method {
             margin-left: 1em;
         }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        }
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: #333;
+        }
+        .sidebar .nav-link .active {
+            color: #007bff;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        .search-results {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .search-results li {
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .search-results li:hover {
+            color: #007bff;
+        }
+        .search-button {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
+    <!-- Search Bar and Button -->
     <div class="container">
-        <h1>API Reference</h1>
-
-        <h2>Enums</h2>
-
-        <h3>DiscordPermissions</h3>
-        <p>Enum representing various Discord permissions.</p>
-        <ul>
-            <li><code>CREATE_INSTANT_INVITE</code>: Permission to create instant invites.</li>
-            <li><code>KICK_MEMBERS</code>: Permission to kick members.</li>
-            <li><code>BAN_MEMBERS</code>: Permission to ban members.</li>
-            <li><code>ADMINISTRATOR</code>: Permission to be an administrator.</li>
-            <li><code>MANAGE_CHANNELS</code>: Permission to manage channels.</li>
-            <li><code>MANAGE_GUILD</code>: Permission to manage the guild.</li>
-            <li><code>ADD_REACTIONS</code>: Permission to add reactions.</li>
-            <li><code>VIEW_AUDIT_LOG</code>: Permission to view the audit log.</li>
-            <li><code>PRIORITY_SPEAKER</code>: Permission to be a priority speaker.</li>
-            <li><code>STREAM</code>: Permission to stream.</li>
-            <li><code>VIEW_CHANNEL</code>: Permission to view channels.</li>
-            <li><code>SEND_MESSAGES</code>: Permission to send messages.</li>
-            <li><code>SEND_TTS_MESSAGES</code>: Permission to send TTS messages.</li>
-            <li><code>MANAGE_MESSAGES</code>: Permission to manage messages.</li>
-            <li><code>EMBED_LINKS</code>: Permission to embed links.</li>
-            <li><code>ATTACH_FILES</code>: Permission to attach files.</li>
-            <li><code>READ_MESSAGE_HISTORY</code>: Permission to read message history.</li>
-            <li><code>MENTION_EVERYONE</code>: Permission to mention everyone.</li>
-            <li><code>USE_EXTERNAL_EMOJIS</code>: Permission to use external emojis.</li>
-            <li><code>VIEW_GUILD_INSIGHTS</code>: Permission to view guild insights.</li>
-            <li><code>CONNECT</code>: Permission to connect.</li>
-            <li><code>SPEAK</code>: Permission to speak.</li>
-            <li><code>MUTE_MEMBERS</code>: Permission to mute members.</li>
-            <li><code>DEAFEN_MEMBERS</code>: Permission to deafen members.</li>
-            <li><code>MOVE_MEMBERS</code>: Permission to move members.</li>
-            <li><code>USE_VAD</code>: Permission to use voice activity detection.</li>
-            <li><code>CHANGE_NICKNAME</code>: Permission to change nickname.</li>
-            <li><code>MANAGE_NICKNAMES</code>: Permission to manage nicknames.</li>
-            <li><code>MANAGE_ROLES</code>: Permission to manage roles.</li>
-            <li><code>MANAGE_WEBHOOKS</code>: Permission to manage webhooks.</li>
-            <li><code>MANAGE_EMOJIS_AND_STICKERS</code>: Permission to manage emojis and stickers.</li>
-            <li><code>USE_APPLICATION_COMMANDS</code>: Permission to use application commands.</li>
-            <li><code>REQUEST_TO_SPEAK</code>: Permission to request to speak.</li>
-            <li><code>MANAGE_THREADS</code>: Permission to manage threads.</li>
-            <li><code>USE_PUBLIC_THREADS</code>: Permission to use public threads.</li>
-            <li><code>USE_PRIVATE_THREADS</code>: Permission to use private threads.</li>
-            <li><code>USE_EXTERNAL_STICKERS</code>: Permission to use external stickers.</li>
-            <li><code>SEND_MESSAGES_IN_THREADS</code>: Permission to send messages in threads.</li>
-            <li><code>START_EMBEDDED_ACTIVITIES</code>: Permission to start embedded activities.</li>
-        </ul>
-
-        <h3>Event</h3>
-        <p>Enum representing various events in the application.</p>
-        <ul>
-            <li><code>CommandNotFound</code>: Event triggered when a command is not found.</li>
-            <li><code>ArgumentCastingError</code>: Event triggered when there is an error casting an argument.</li>
-            <li><code>ExceptionDuringCommand</code>: Event triggered when there is an exception during command execution.</li>
-            <li><code>CommandReceived</code>: Event triggered when a command is received.</li>
-            <li><code>InvalidPermissions</code>: Event triggered when a user has invalid permissions.</li>
-        </ul>
-
-        <h2>Exceptions</h2>
-
-        <h3>CommandNotFound</h3>
-        <p>Exception raised when a command is not found.</p>
-
-        <h3>ExceptionDuringCommand</h3>
-        <p>Exception raised when there is an exception during command execution.</p>
-
-        <h3>ArgumentCastingError</h3>
-        <p>Exception raised when there is an error casting an argument.</p>
-
-        <h3>InvalidPermissions</h3>
-        <p>Exception raised when a user has invalid permissions.</p>
-
-        <h2>Handler Class</h2>
-        <p>The <code>Handler</code> class processes commands and events in a Discord bot.</p>
-
-        <h3>__init__(self, app: Client, prefix: Union[str, List[str]], case_insensitive: bool = False)</h3>
-        <p>Initialize the Handler.</p>
-        <ul>
-            <li><strong>app</strong> (Client): The Discord client instance.</li>
-            <li><strong>prefix</strong> (Union[str, List[str]]): The prefix or list of prefixes for commands.</li>
-            <li><strong>case_insensitive</strong> (bool): Whether command matching is case insensitive.</li>
-        </ul>
-
-        <h3>resolve_ping_to_role(self, guild: Guild, role_id_or_ping: Union[int, str])</h3>
-        <p>Resolve a role mention or ID to a role ID.</p>
-        <ul>
-            <li><strong>guild</strong> (Guild): The guild in which to resolve the role.</li>
-            <li><strong>role_id_or_ping</strong> (Union[int, str]): The role ID or mention.</li>
-        </ul>
-
-        <h3>resolve_ping_to_user(self, guild: Guild, user_id_or_ping: Union[int, str])</h3>
-        <p>Resolve a user mention or ID to a user ID.</p>
-        <ul>
-            <li><strong>guild</strong> (Guild): The guild in which to resolve the user.</li>
-            <li><strong>user_id_or_ping</strong> (Union[int, str]): The user ID or mention.</li>
-        </ul>
-
-        <h3>check_and_guess_param_types(self, func: Callable)</h3>
-        <p>Check and guess parameter types for a command function.</p>
-        <ul>
-            <li><strong>func</strong> (Callable): The command function.</li>
-        </ul>
-
-        <h3>on_message(self, message: Message)</h3>
-        <p>Handle an incoming message.</p>
-        <ul>
-            <li><strong>message</strong> (Message): The incoming message.</li>
-        </ul>
-
-        <h3>role_restricted(self, role: discord_Role)</h3>
-        <p>Decorator to restrict a command to users with a specific role.</p>
-        <ul>
-            <li><strong>role</strong> (discord_Role): The required role.</li>
-        </ul>
-
-        <h3>user_restricted(self, user_id: list[int])</h3>
-        <p>Decorator to restrict a command to specific users.</p>
-        <ul>
-            <li><strong>user_id</strong> (list[int]): List of allowed user IDs.</li>
-        </ul>
-
-        <h3>channel_restricted(self, channel_id: list[int])</h3>
-        <p>Decorator to restrict a command to specific channels.</p>
-        <ul>
-            <li><strong>channel_id</strong> (list[int]): List of allowed channel IDs.</li>
-        </ul>
-
-        <h3>server_restricted(self, server_id: list[int])</h3>
-        <p>Decorator to restrict a command to specific servers.</p>
-        <ul>
-            <li><strong>server_id</strong> (list[int]): List of allowed server IDs.</li>
-        </ul>
-
-        <h3>role_banned(self, role: discord_Role)</h3>
-        <p>Decorator to ban a command from users with a specific role.</p>
-        <ul>
-            <li><strong>role</strong> (discord_Role): The banned role.</li>
-        </ul>
-
-        <h3>user_banned(self, user_id: list[int])</h3>
-        <p>Decorator to ban a command from specific users.</p>
-        <ul>
-            <li><strong>user_id</strong> (list[int]): List of banned user IDs.</li>
-        </ul>
-
-        <h3>channel_banned(self, channel_id: list[int])</h3>
-        <p>Decorator to ban a command from specific channels.</p>
-        <ul>
-            <li><strong>channel_id</strong> (list[int]): List of banned channel IDs.</li>
-        </ul>
-
-        <h3>server_banned(self, server_id: list[int])</h3>
-        <p>Decorator to ban a command from specific servers.</p>
-        <ul>
-            <li><strong>server_id</strong> (list[int]): List of banned server IDs.</li>
-        </ul>
-
+        <div class="search-bar">
+            <input id="searchInput" type="text" class="form-control" placeholder="Search...">
+            <button id="searchButton" class="btn btn-primary search-button">Search</button>
+        </div>
+        <div>
+            <ul id="searchResults" class="search-results"></ul>
+        </div>
     </div>
+    <!-- Sidebar -->
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#enums">
+                        Enums
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#exceptions">
+                        Exceptions
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#handler">
+                        Handler
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 content">
+        <div class="container">
+            <h1>API Reference</h1>
+
+            <!-- Enums Section -->
+            <div id="enums">
+                <h2>Enums</h2>
+
+                <h3 id="discord-permissions">DiscordPermissions</h3>
+                <p>Enum representing various Discord permissions.</p>
+                <ul>
+                    <li><code>CREATE_INSTANT_INVITE</code>: Permission to create instant invites.</li>
+                    <li><code>KICK_MEMBERS</code>: Permission to kick members.</li>
+                    <li><code>BAN_MEMBERS</code>: Permission to ban members.</li>
+                    <li><code>ADMINISTRATOR</code>: Permission to be an administrator.</li>
+                    <li><code>MANAGE_CHANNELS</code>: Permission to manage channels.</li>
+                    <!-- Add more items as needed -->
+                </ul>
+
+                <h3 id="event">Event</h3>
+                <p>Enum representing various events in the application.</p>
+                <ul>
+                    <li><code>CommandNotFound</code>: Event triggered when a command is not found.</li>
+                    <li><code>ArgumentCastingError</code>: Event triggered when there is an error casting an argument.</li>
+                    <!-- Add more items as needed -->
+                </ul>
+            </div>
+
+            <!-- Exceptions Section -->
+            <div id="exceptions">
+                <h2>Exceptions</h2>
+
+                <h3 id="command-not-found">CommandNotFound</h3>
+                <p>Exception raised when a command is not found.</p>
+
+                <h3 id="exception-during-command">ExceptionDuringCommand</h3>
+                <p>Exception raised when there is an exception during command execution.</p>
+
+                <!-- Add more exception headings and content as needed -->
+            </div>
+
+            <!-- Handler Section -->
+            <div id="handler">
+                <h2>Handler Class</h2>
+                <p>The <code>Handler</code> class processes commands and events in a Discord bot.</p>
+
+                <h3 id="init">__init__(self, app: Client, prefix: Union[str, List[str]], case_insensitive: bool = False)</h3>
+                <p>Initialize the Handler.</p>
+                <ul>
+                    <li><strong>app</strong> (Client): The Discord client instance.</li>
+                    <li><strong>prefix</strong> (Union[str, List[str]]): The prefix or list of prefixes for commands.</li>
+                    <li><strong>case_insensitive</strong> (bool): Whether command matching is case insensitive.</li>
+                </ul>
+
+                <h3 id="resolve-ping-to-role">resolve_ping_to_role(self, guild: Guild, role_id_or_ping: Union[int, str])</h3>
+                <p>Resolve a role mention or ID to a role ID.</p>
+                <ul>
+                    <li><strong>guild</strong> (Guild): The guild in which to resolve the role.</li>
+                    <li><strong>role_id_or_ping</strong> (Union[int, str]): The role ID or mention.</li>
+                </ul>
+
+                <h3 id="handle-command">handle_command(self, message: Message)</h3>
+                <p>Handle a command received in a message.</p>
+                <ul>
+                    <li><strong>message</strong> (Message): The Discord message containing the command.</li>
+                </ul>
+
+                <h3 id="handle-event">handle_event(self, event: Event)</h3>
+                <p>Handle an event received from the Discord API.</p>
+                <ul>
+                    <li><strong>event</strong> (Event): The event object received.</li>
+                </ul>
+
+                <h3 id="run">run(self)</h3>
+                <p>Start the handler to listen for events and commands.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- External JS libraries -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
+
+    <!-- Custom JS for search functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/@fusejs/core@7.15.2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = ['enums', 'exceptions', 'handler']; // IDs of sections to search
+            const sectionsData = {}; // Placeholder for data in each section
+
+            // Collect text content from each section
+            sections.forEach(function(sectionId) {
+                const sectionElement = document.getElementById(sectionId);
+                if (sectionElement) {
+                    sectionsData[sectionId] = sectionElement.innerText;
+                }
+            });
+
+            // Initialize Fuse for searching across sections
+            const fuse = new Fuse(Object.entries(sectionsData), {
+                keys: ['1'], // Adjust keys based on your content structure (use '1' to target the text content)
+                includeScore: true,
+                threshold: 0.3, // Adjust threshold as needed
+                ignoreLocation: true
+            });
+
+            // Function to handle search input
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+
+            searchButton.addEventListener('click', function() {
+                performSearch();
+            });
+
+            searchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            function performSearch() {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    return;
+                }
+
+                const searchResults = fuse.search(query);
+
+                // Redirect to the first result anchor
+                if (searchResults.length > 0) {
+                    const firstResultSectionId = searchResults[0].item[0];
+                    const firstResultAnchor = document.getElementById(firstResultSectionId);
+                    if (firstResultAnchor) {
+                        firstResultAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
