@@ -49,20 +49,21 @@ class EventManager:
         if new_event_name in self.events:
             print("hey")
             print(self.events)
+            if self.events[new_event_name] == []:
+                if event_name == 'CommandNotFound':
+                    raise CommandNotFound(f"Command not found")
+                elif event_name == 'ExceptionDuringCommand':
+                    raise ExceptionDuringCommand(f"Exception occurred during command execution")
+                elif event_name == 'ArgumentCastingError':
+                    raise ArgumentCastingError(f"Error casting argument")
+                elif event_name == 'InvalidPermissions':
+                    raise InvalidPermissions(f"Invalid permissions")
+                else:
+                    raise ValueError(f"Unknown event name '{new_event_name}'")
             for function in self.events[new_event_name]:
                 await function(*args, **kwargs)
         else:
-            print("nahh")
-            if event_name == 'CommandNotFound':
-                raise CommandNotFound(f"Command not found")
-            elif event_name == 'ExceptionDuringCommand':
-                raise ExceptionDuringCommand(f"Exception occurred during command execution")
-            elif event_name == 'ArgumentCastingError':
-                raise ArgumentCastingError(f"Error casting argument")
-            elif event_name == 'InvalidPermissions':
-                raise InvalidPermissions(f"Invalid permissions")
-            else:
-                raise ValueError(f"Unknown event name '{new_event_name}'")
+            raise ValueError(f"Unknown event name '{new_event_name}'")
     
     async def remove_event(self, event_name: str, function: Callable):
         """

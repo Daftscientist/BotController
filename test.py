@@ -64,4 +64,4 @@ async def role(ctx: discord.Message, role_id: discord.Role, user_id: discord.Use
 async def on_ready():
     print(f'We have logged in as {client.user}')
 
-client.run("NzcxMzMxODE3OTYwNjM2NDI2.GOOeF0.q4kV5DNWcCLvaoaWgbNeqASB-2aClMv0_IJWAc")
+client.run("")
