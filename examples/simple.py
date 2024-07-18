@@ -1,5 +1,5 @@
 import discord
-from handler import Handler, Command
+from botcontroller import Handler, Command
 
 intents = discord.Intents.default()
 intents.message_content = True  # Enable message_content intent
