@@ -1,5 +1,5 @@
 import discord
-from handler import Handler, Event, DiscordPermissions
+from botcontroller import Handler, Event, DiscordPermissions
 
 from discord import Role
 

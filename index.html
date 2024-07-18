@@ -213,7 +213,7 @@
                         <i class="fas fa-link"></i>
                     </a>
                 </h3>
-                <p>Initialize the Handler.</p>
+                <p>Initialize the botcontroller.</p>
                 <h5>Parameters:</h5>
                 <ul>
                     <li><strong>app</strong> (Client): The Discord client instance.</li>
@@ -241,15 +241,15 @@
                         <i class="fas fa-link"></i>
                     </a>
                 </h3>
-                <p>Decorator to register an event handler.</p>
+                <p>Decorator to register an event botcontroller.</p>
                 <h5>Parameters:</h5>
                 <ul>
-                    <li><strong>event_name</strong> (Union[Str | handler.Event]): The name of the event to handle.</li>
+                    <li><strong>event_name</strong> (Union[Str | botcontroller.Event]): The name of the event to handle.</li>
                 </ul>
                 <h5>Injected arguments:</h5>
                 <ul>
                     <li><strong>message</strong> [conditional on event type] (discord.Message): The Discord message containing the command.</li>
-                    <li><strong>command</strong> [conditional on event type] (handler.Command): The invoked command.</li>
+                    <li><strong>command</strong> [conditional on event type] (botcontroller.Command): The invoked command.</li>
                     <li><strong>argument</strong> [conditional on event type] (str): The argument that caused the event to be invoked.</li>
                     <li><strong>exception</strong> [conditional on event type] (Exception): The exception that was raised.</li>
                     <li><strong>permission_type</strong> [conditional on event type] (str['USER' | 'CHANNEL' | 'GUILD' | 'ROLE' | 'PERMISSION']): The type of Permission check that errored.</li>
@@ -279,7 +279,7 @@
                 <p>Handles the event when there is an error casting an argument.</p>
                 <ul>
                     <li><strong>message</strong> (discord.Message): The message object received during invocation.</li>
-                    <li><strong>command</strong> (handler.Command): The command object in which the error occured.</li>
+                    <li><strong>command</strong> (botcontroller.Command): The command object in which the error occured.</li>
                     <li><strong>argument</strong> (str): The argument that caused the error.</li>
                 </ul>
 
@@ -291,7 +291,7 @@
                 <p>Handles the event when there is an exception during command execution.</p>
                 <ul>
                     <li><strong>message</strong> (discord.Message): The message object received during invocation.</li>
-                    <li><strong>command</strong> (handler.Command): The command object in which the exception occured.</li>
+                    <li><strong>command</strong> (botcontroller.Command): The command object in which the exception occured.</li>
                     <li><strong>error</strong> (Exception): The exception that was raised.</li>
                 </ul>
 
